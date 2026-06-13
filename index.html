@@ -1,1751 +1,257 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Londres — The Travel Expert</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --pedra: #DCD8D2;
-    --pedra-clara: #E6E2DC;
-    --grafite: #1A1A1A;
-    --grafite-suave: #2A2A28;
-    --tinta-suave: #4A4A47;
-    --terracota: #C2543C;
-    --terracota-escuro: #8A3A26;
-    --salvia: #6B7960;
-    --salvia-clara: #9DA89A;
-    --bronze: #8A6F45;
-    --musgo: #6B6B68;
-    --linha: rgba(26,26,26,0.12);
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--pedra-clara);
-    font-family: 'Inter', system-ui, sans-serif;
-    color: var(--grafite-suave);
-    line-height: 1.7;
-    font-size: 15px;
-  }
-  .fixed-header {
-    position: fixed; top: 0; left: 0; right: 0;
-    height: 32px;
-    background: rgba(230,226,220,0.95);
-    backdrop-filter: blur(8px);
-    border-bottom: 0.5px solid var(--linha);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 100;
-  }
-  .fixed-header span {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; letter-spacing: 0.25em;
-    color: var(--musgo); text-transform: uppercase;
-  }
-  .outer {
-    display: flex; justify-content: center;
-    padding: 48px 24px 80px;
-    gap: 64px; margin-top: 32px;
-  }
-  .sidebar {
-    position: sticky; top: 56px;
-    align-self: flex-start;
-    width: 140px; flex-shrink: 0;
-  }
-  .sidebar nav { display: flex; flex-direction: column; gap: 4px; }
-  .sidebar nav a {
-    display: flex; align-items: baseline; gap: 10px;
-    text-decoration: none; padding: 6px 0;
-    border-bottom: 0.5px solid transparent;
-    transition: border-color 0.2s;
-  }
-  .sidebar nav a:hover { border-bottom-color: var(--linha); }
-  .sidebar nav a .sn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; color: var(--salvia); min-width: 20px;
-  }
-  .sidebar nav a .sl {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 12px; color: var(--grafite); line-height: 1.3;
-  }
-  .page {
-    max-width: 820px; width: 100%;
-    background: var(--pedra);
-    border-radius: 12px;
-    box-shadow: 0 2px 40px rgba(26,26,26,0.08);
-    overflow: hidden;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  /* CAPA */
-  .cover {
-    position: relative;
-    padding: 72px 72px 64px;
-    background: var(--pedra);
-    overflow: hidden;
-    min-height: 520px;
-    display: flex; flex-direction: column;
-    justify-content: space-between;
-  }
-  .cover-grid {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(26,26,26,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(26,26,26,0.06) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
-  }
-  .compass { position: absolute; top: 72px; right: 72px; opacity: 0.35; }
-  .vol-label {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 13px;
-    color: var(--musgo); letter-spacing: 0.05em;
-    margin-bottom: 80px; position: relative; z-index: 1;
-  }
-  .cover-main { position: relative; z-index: 1; }
-  h1.title {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-size: clamp(72px, 12vw, 108px);
-    line-height: 0.9; color: var(--grafite);
-    letter-spacing: -0.02em;
-  }
-  h1.title em {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; color: var(--terracota);
-    display: block; font-size: 0.48em;
-    letter-spacing: 0.01em; margin-top: 8px;
-  }
-  .tagline {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 18px;
-    color: var(--tinta-suave);
-    margin-top: 28px; max-width: 460px; line-height: 1.5;
-  }
-  .cover-coords {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: var(--musgo);
-    margin-top: 20px; letter-spacing: 0.05em;
-  }
-  .meta-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 1px; background: var(--linha);
-    margin-top: 48px; border-top: 0.5px solid var(--linha);
-  }
-  .meta-item { background: var(--pedra); padding: 16px 20px; }
-  .meta-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze);
-    display: block; margin-bottom: 6px;
-  }
-  .meta-value {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 17px; color: var(--grafite); font-weight: 500;
-  }
+    <!-- ===== SEO BÁSICO ===== -->
+    <title>Reflexo de Gato™ - Método para Goleiros</title>
+    <meta name="description" content="Descubra o método Reflexo de Gato™ e transforme seu reflexo na hora da defesa. Treino para goleiros explosivos como Buffon, Courtois e Neuer. Comece agora!">
+    <meta name="keywords" content="goleiro, treino de goleiro, reflexo de gato, defesa, futebol, treino para goleiros">
+    <meta name="author" content="Tobias Goleiro">
+    <link rel="canonical" href="https://tobiasgoleiro.com.br">
 
-  /* BASE INFO CARD — North Acton */
-  .base-card {
-    background: var(--grafite);
-    color: var(--pedra-clara);
-    border-radius: 8px;
-    padding: 28px 32px;
-    margin-bottom: 48px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-  .base-card .bc-label {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--salvia-clara);
-    display: block; margin-bottom: 8px;
-  }
-  .base-card .bc-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px; color: var(--pedra);
-    margin-bottom: 4px;
-  }
-  .base-card .bc-sub {
-    font-size: 12px; color: var(--salvia-clara); line-height: 1.5;
-  }
-  .base-card .bc-lines { display: flex; flex-direction: column; gap: 6px; }
-  .base-card .bc-line {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 13px; color: var(--pedra-clara);
-  }
-  .bc-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  }
-  .central { background: #E32017; }
-  .district { background: #00782A; }
-  .overground { background: #EE7C0E; }
+    <!-- ===== OPEN GRAPH (WhatsApp, Facebook, Instagram) ===== -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Você é goleiro e trava na hora da defesa decisiva?">
+    <meta property="og:description" content="Método Reflexo de Gato™ — transforme goleiros lentos em paredões explosivos como Buffon, Courtois e Neuer.">
+    <meta property="og:image" content="https://tobiasgoleiro.com.br/og-image.jpg">
+    <meta property="og:url" content="https://tobiasgoleiro.com.br">
+    <meta property="og:locale" content="pt_BR">
 
-  /* CONTEÚDO */
-  .content { padding: 64px 72px; }
-  section { margin-bottom: 80px; }
-  .section-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 10px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze);
-    display: block; margin-bottom: 20px;
-  }
-  h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 400; font-size: 36px;
-    color: var(--grafite); line-height: 1.15; margin-bottom: 24px;
-  }
-  h2 em {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; color: var(--terracota);
-  }
-  h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500; font-size: 22px;
-    color: var(--grafite); margin-bottom: 12px; line-height: 1.3;
-  }
-  p { margin-bottom: 16px; color: var(--tinta-suave); }
-  p:last-child { margin-bottom: 0; }
-  p em, li em, td em {
-    font-style: italic; font-family: inherit;
-    color: inherit; font-weight: inherit;
-  }
-  p strong, li strong { font-weight: 600; color: var(--grafite-suave); }
+    <!-- ===== TWITTER CARD ===== -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Você é goleiro e trava na hora da defesa decisiva?">
+    <meta name="twitter:description" content="Método Reflexo de Gato™ — treino para goleiros explosivos.">
+    <meta name="twitter:image" content="https://tobiasgoleiro.com.br/og-image.jpg">
 
-  /* SUMÁRIO */
-  .toc-list { list-style: none; margin-top: 8px; }
-  .toc-list li {
-    display: flex; align-items: center; gap: 16px;
-    padding: 12px 0; border-bottom: 0.5px solid var(--linha);
-  }
-  .toc-list li:last-child { border-bottom: none; }
-  .toc-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; color: var(--salvia); min-width: 24px;
-  }
-  .toc-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 18px; color: var(--grafite); text-decoration: none;
-  }
-  .toc-name:hover { color: var(--terracota); }
-
-  /* INFO CARDS */
-  .info-cards {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 12px; margin-top: 24px;
-  }
-  .info-card {
-    background: var(--pedra-clara); border-radius: 8px;
-    padding: 18px 20px; border: 0.5px solid var(--linha);
-  }
-  .info-card .ic-label {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze);
-    display: block; margin-bottom: 8px;
-  }
-  .info-card p { font-size: 13px; color: var(--tinta-suave); margin: 0; line-height: 1.5; }
-
-  /* AT A GLANCE */
-  .glance-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 12px; margin-top: 8px;
-  }
-  .glance-card {
-    background: var(--pedra-clara); border-radius: 8px;
-    padding: 18px 20px; border: 0.5px solid var(--linha);
-  }
-  .glance-card .gc-label {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze);
-    display: block; margin-bottom: 6px;
-  }
-  .glance-card .gc-val {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 19px; color: var(--grafite);
-  }
-  .glance-card .gc-sub { font-size: 12px; color: var(--musgo); margin-top: 4px; }
-
-  /* MINI MAPA */
-  .map-container {
-    background: var(--pedra-clara); border-radius: 8px;
-    padding: 32px; border: 0.5px solid var(--linha);
-    margin-top: 8px; display: flex; justify-content: center;
-  }
-
-  /* BLOCO DE ZONA */
-  .zone-block {
-    margin-bottom: 72px;
-  }
-  .zone-header {
-    display: flex; align-items: center; gap: 16px;
-    margin-bottom: 32px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--linha);
-  }
-  .zone-number {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300; font-size: 48px;
-    line-height: 1; color: var(--grafite); opacity: 0.18;
-  }
-  .zone-info {}
-  .zone-label {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze);
-    display: block; margin-bottom: 4px;
-  }
-  .zone-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px; color: var(--grafite);
-  }
-  .zone-title em {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; color: var(--terracota);
-  }
-  .zone-sub {
-    font-size: 12px; color: var(--musgo);
-    margin-top: 2px;
-  }
-  .tube-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--pedra-clara);
-    border: 0.5px solid var(--linha);
-    border-radius: 20px;
-    padding: 4px 10px;
-    font-size: 11px; color: var(--tinta-suave);
-    margin-top: 6px;
-  }
-  .tube-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-  }
-
-  /* DIAS */
-  .day-block {
-    margin-bottom: 56px; padding-bottom: 56px;
-    border-bottom: 0.5px solid var(--linha);
-    position: relative;
-  }
-  .day-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .day-number {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300; font-size: 80px;
-    line-height: 1; color: var(--grafite); opacity: 0.13;
-    position: absolute; top: -16px; right: 0;
-    pointer-events: none; user-select: none;
-  }
-  .day-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
-  .day-badge {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze);
-  }
-  .day-date {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; color: var(--musgo);
-  }
-  .day-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 400; font-size: 28px;
-    color: var(--grafite); line-height: 1.2; margin-bottom: 4px;
-  }
-  .day-title em {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; color: var(--terracota);
-  }
-  .day-zone {
-    font-size: 11px; color: var(--musgo);
-    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px;
-  }
-  .commute-tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(107,121,96,0.1);
-    border-radius: 4px; padding: 3px 8px;
-    font-size: 11px; color: var(--salvia);
-    margin-bottom: 20px;
-  }
-
-  /* PERÍODOS */
-  .period { margin-bottom: 20px; }
-  .period-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .period-label {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze);
-  }
-  .period-content { padding-left: 32px; }
-  .period-content p { font-size: 14px; margin-bottom: 10px; }
-
-  .extra-layer {
-    background: rgba(107,121,96,0.08);
-    border-left: 2px solid var(--salvia);
-    border-radius: 0 6px 6px 0;
-    padding: 12px 16px; margin-top: 10px;
-  }
-  .extra-layer .el-label {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--salvia);
-    display: block; margin-bottom: 6px;
-  }
-  .extra-layer p { font-size: 13px; margin: 0; }
-
-  .tip-box {
-    background: rgba(194,84,60,0.06);
-    border-left: 2px solid var(--terracota);
-    border-radius: 0 6px 6px 0;
-    padding: 10px 14px; margin-top: 10px;
-  }
-  .tip-box p { font-size: 13px; margin: 0; color: var(--tinta-suave); }
-
-  /* PULL QUOTE */
-  .pullquote {
-    padding: 28px 0;
-    border-top: 0.5px solid var(--linha);
-    border-bottom: 0.5px solid var(--linha);
-    margin: 48px 0; position: relative;
-  }
-  .pullquote::before {
-    content: '"';
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 80px; color: var(--terracota); opacity: 0.3;
-    position: absolute; top: -16px; left: -8px; line-height: 1;
-  }
-  .pullquote q {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 22px;
-    color: var(--grafite); line-height: 1.5;
-    display: block; padding-left: 32px; quotes: none;
-  }
-
-  /* ORÇAMENTO */
-  .budget-table {
-    width: 100%; border-collapse: collapse; margin-top: 16px;
-  }
-  .budget-table th {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze);
-    text-align: left; padding: 10px 16px;
-    border-bottom: 1px solid var(--linha);
-  }
-  .budget-table td {
-    padding: 12px 16px; font-size: 14px;
-    color: var(--tinta-suave);
-    border-bottom: 0.5px solid var(--linha);
-  }
-  .budget-table td:last-child {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px; color: var(--grafite); text-align: right;
-  }
-  .budget-table tr.total td {
-    font-weight: 600; color: var(--grafite);
-    border-top: 1px solid var(--grafite); border-bottom: none;
-  }
-  .budget-table tr.total td:last-child { color: var(--terracota); font-size: 15px; }
-
-  /* SEGURANÇA */
-  .safety-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: 16px; margin-top: 16px;
-  }
-  .safety-card {
-    background: var(--pedra-clara); border-radius: 8px;
-    padding: 20px 22px; border: 0.5px solid var(--linha);
-  }
-  .safety-card h4 {
-    font-family: 'Inter', sans-serif; font-size: 11px;
-    letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--bronze); margin-bottom: 10px;
-  }
-  .safety-card ul { list-style: none; padding: 0; }
-  .safety-card ul li {
-    font-size: 13px; color: var(--tinta-suave);
-    padding: 4px 0; border-bottom: 0.5px solid var(--linha); line-height: 1.5;
-  }
-  .safety-card ul li:last-child { border-bottom: none; }
-
-  /* PLANO B */
-  .planb-list { list-style: none; margin-top: 12px; }
-  .planb-list li {
-    display: flex; gap: 16px; padding: 14px 0;
-    border-bottom: 0.5px solid var(--linha);
-    font-size: 14px; color: var(--tinta-suave);
-  }
-  .planb-list li:last-child { border-bottom: none; }
-  .planb-icon {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; color: var(--terracota);
-    min-width: 24px; padding-top: 2px;
-  }
-
-  /* ARMADILHAS */
-  .trap-list { list-style: none; margin-top: 12px; }
-  .trap-list li {
-    padding: 14px 0; border-bottom: 0.5px solid var(--linha);
-    font-size: 14px; color: var(--tinta-suave);
-    display: flex; gap: 12px;
-  }
-  .trap-list li:last-child { border-bottom: none; }
-  .trap-x { color: var(--terracota); font-weight: 600; min-width: 16px; }
-
-  /* PREPARAÇÃO */
-  .prep-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 12px; margin-top: 16px;
-  }
-  .prep-card {
-    background: var(--pedra-clara); border-radius: 8px;
-    padding: 18px 20px; border: 0.5px solid var(--linha);
-  }
-  .prep-card h4 {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze); margin-bottom: 10px;
-  }
-  .prep-card ul { list-style: none; padding: 0; }
-  .prep-card ul li {
-    font-size: 12px; color: var(--tinta-suave);
-    padding: 3px 0; line-height: 1.5;
-  }
-
-  /* MÍDIA */
-  .media-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 16px; margin-top: 16px;
-  }
-  .media-card {
-    background: var(--pedra-clara); border-radius: 8px;
-    padding: 20px; border: 0.5px solid var(--linha);
-  }
-  .media-card .mc-type {
-    font-size: 9px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: var(--bronze);
-    display: block; margin-bottom: 8px;
-  }
-  .media-card .mc-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 16px; color: var(--grafite); line-height: 1.3; margin-bottom: 4px;
-  }
-  .media-card .mc-detail { font-size: 12px; color: var(--musgo); }
-
-  /* WAVE */
-  .wave-divider { margin: 0; display: block; }
-
-  /* ASSINATURA */
-  .signature {
-    text-align: center; padding: 48px 72px;
-    border-top: 0.5px solid var(--linha);
-  }
-  .sign {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 20px; color: var(--terracota);
-  }
-  .sign-sub {
-    font-size: 11px; letter-spacing: 0.2em;
-    text-transform: uppercase; color: var(--musgo); margin-top: 8px;
-  }
-
-  /* RESPONSIVO */
-  @media (max-width: 1023px) { .sidebar { display: none; } .outer { padding: 12px; } }
-  @media (max-width: 768px) {
-    .cover { padding: 40px 28px 48px; min-height: auto; }
-    .content { padding: 40px 28px; }
-    .meta-grid { grid-template-columns: repeat(2, 1fr); }
-    .glance-grid { grid-template-columns: repeat(2, 1fr); }
-    .info-cards { grid-template-columns: 1fr; }
-    .safety-grid { grid-template-columns: 1fr; }
-    .prep-grid { grid-template-columns: 1fr; }
-    .media-grid { grid-template-columns: 1fr; }
-    .base-card { grid-template-columns: 1fr; }
-    .compass { top: 40px; right: 28px; }
-  }
-  @media (max-width: 480px) { h1.title { font-size: 56px; } }
-</style>
+    <!-- ===== ESTILO ===== -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="fixed-header">
-  <span>The Travel Expert · Londres 2026 · North Acton</span>
-</div>
-
-<div class="outer">
-
-  <aside class="sidebar">
-    <nav>
-      <a href="#base"><span class="sn">00</span><span class="sl">Sua base</span></a>
-      <a href="#antes"><span class="sn">01</span><span class="sl">Antes de partir</span></a>
-      <a href="#glance"><span class="sn">02</span><span class="sl">Resumo</span></a>
-      <a href="#mapa"><span class="sn">03</span><span class="sl">Mini-mapa</span></a>
-      <a href="#roteiro"><span class="sn">04</span><span class="sl">Roteiro</span></a>
-      <a href="#orcamento"><span class="sn">05</span><span class="sl">Orçamento</span></a>
-      <a href="#seguranca"><span class="sn">06</span><span class="sl">Segurança</span></a>
-      <a href="#planob"><span class="sn">07</span><span class="sl">Plano B</span></a>
-      <a href="#armadilhas"><span class="sn">08</span><span class="sl">Armadilhas</span></a>
-      <a href="#preparacao"><span class="sn">09</span><span class="sl">Preparação</span></a>
-      <a href="#clima"><span class="sn">10</span><span class="sl">Para o clima</span></a>
-    </nav>
-  </aside>
-
-  <main class="page">
-
-    <!-- CAPA -->
-    <div class="cover">
-      <div class="cover-grid"></div>
-      <svg class="compass" width="52" height="52" viewBox="0 0 52 52" fill="none">
-        <circle cx="26" cy="26" r="24" stroke="#C2543C" stroke-width="0.5" opacity="0.5"/>
-        <circle cx="26" cy="26" r="2" fill="#C2543C" opacity="0.8"/>
-        <polygon points="26,4 28.5,24 26,22 23.5,24" fill="#C2543C" opacity="0.9"/>
-        <polygon points="26,48 28.5,28 26,30 23.5,28" fill="#6B7960" opacity="0.7"/>
-        <polygon points="4,26 24,23.5 22,26 24,28.5" fill="#6B7960" opacity="0.7"/>
-        <polygon points="48,26 28,23.5 30,26 28,28.5" fill="#6B7960" opacity="0.7"/>
-        <text x="26" y="14" text-anchor="middle" font-family="Inter" font-size="7" fill="#C2543C" opacity="0.9">N</text>
-        <text x="26" y="44" text-anchor="middle" font-family="Inter" font-size="6" fill="#6B7960" opacity="0.7">S</text>
-        <text x="10" y="29" text-anchor="middle" font-family="Inter" font-size="6" fill="#6B7960" opacity="0.7">W</text>
-        <text x="43" y="29" text-anchor="middle" font-family="Inter" font-size="6" fill="#6B7960" opacity="0.7">E</text>
-      </svg>
-      <div class="vol-label">vol. i · outono em Londres &nbsp;·&nbsp; Itinerário · Setembro–Outubro 2026</div>
-      <div class="cover-main">
-        <h1 class="title">
-          Londres
-          <em>base em North Acton, West London</em>
-        </h1>
-        <p class="tagline">Dezessete dias com roteiro organizado por polo geográfico — menos Tube, mais cidade.</p>
-        <p class="cover-coords">51°31'12"N · 0°16'06"W &nbsp;·&nbsp; North Acton · Zone 2/3 · Central Line</p>
-      </div>
-      <div class="meta-grid">
-        <div class="meta-item"><span class="meta-label">Estação</span><div class="meta-value">Outono</div></div>
-        <div class="meta-item"><span class="meta-label">Ritmo</span><div class="meta-value">Moderado</div></div>
-        <div class="meta-item"><span class="meta-label">Base</span><div class="meta-value">North Acton</div></div>
-        <div class="meta-item"><span class="meta-label">Duração</span><div class="meta-value">17 dias</div></div>
-      </div>
-    </div>
-
-    <div class="content">
-
-      <!-- SUA BASE -->
-      <section id="base">
-        <span class="section-label">Ponto de partida</span>
-        <h2>Sua base — <em>North Acton</em></h2>
-
-        <div class="base-card">
-          <div>
-            <span class="bc-label">Localização</span>
-            <div class="bc-title">North Acton</div>
-            <div class="bc-sub">West London · Zona 2/3 · Borough of Ealing<br>A 20 min direto de Oxford Circus</div>
-          </div>
-          <div class="bc-lines">
-            <span class="bc-label">Linhas próximas</span>
-            <div class="bc-line"><span class="bc-dot central"></span> Central Line — direto ao centro (Oxford Circus, Holborn, Bank)</div>
-            <div class="bc-line"><span class="bc-dot district"></span> District Line (via Ealing Broadway) — Kensington, Victoria, Westminster</div>
-            <div class="bc-line"><span class="bc-dot overground"></span> London Overground em West Acton — conexão sul</div>
-          </div>
-        </div>
-
-        <p>North Acton é bairro residencial, calmo, majoritariamente local — você vai viver numa parte de Londres que não existe nos guias de turismo, e isso é bom. Mercadinho na esquina, cafés de bairro, sem fila de turista. A Central Line a partir da estação North Acton te joga no centro sem baldeação.</p>
-        <p><strong>Lógica do roteiro:</strong> organizei os dias por polo geográfico. Quando o destino é West London (Kensington, Notting Hill, Shepherd's Bush), você sai da porta praticamente já lá. Quando é Central ou East, a Central Line resolve. Isso reduz deslocamentos e cansa menos.</p>
-        <p><strong>Da chegada no LCY até North Acton:</strong> DLR até Canning Town → Jubilee até Bond Street → Central Line até North Acton. Cerca de 50-60 min, ~£4 no contactless. Há opção mais rápida: DLR até Bank → Central Line direta até North Acton, ~45 min.</p>
-      </section>
-
-      <!-- SUMÁRIO -->
-      <section>
-        <span class="section-label">Sumário</span>
-        <ul class="toc-list">
-          <li><span class="toc-num">01</span><a class="toc-name" href="#antes">Antes de partir</a></li>
-          <li><span class="toc-num">02</span><a class="toc-name" href="#glance">Resumo da viagem</a></li>
-          <li><span class="toc-num">03</span><a class="toc-name" href="#mapa">Mini-mapa</a></li>
-          <li><span class="toc-num">04</span><a class="toc-name" href="#roteiro">Roteiro dia a dia</a></li>
-          <li><span class="toc-num">05</span><a class="toc-name" href="#orcamento">Orçamento estimado</a></li>
-          <li><span class="toc-num">06</span><a class="toc-name" href="#seguranca">Segurança e bom senso</a></li>
-          <li><span class="toc-num">07</span><a class="toc-name" href="#planob">Plano B — imprevistos</a></li>
-          <li><span class="toc-num">08</span><a class="toc-name" href="#armadilhas">Armadilhas a evitar</a></li>
-          <li><span class="toc-num">09</span><a class="toc-name" href="#preparacao">Preparação</a></li>
-          <li><span class="toc-num">10</span><a class="toc-name" href="#clima">Para entrar no clima</a></li>
-        </ul>
-      </section>
-
-      <!-- ANTES DE PARTIR -->
-      <section id="antes">
-        <span class="section-label">Contexto</span>
-        <h2>Antes de <em>partir</em></h2>
-        <p>Setembro e outubro são o melhor momento para visitar Londres. O verão turístico baixou — filas menores, preços mais razoáveis, e os parques começam a ganhar folhagem. Em setembro você pega dias com sol e temperatura entre 13°C e 20°C; em outubro o frescor aumenta para 8°C-15°C, com mais chuva, mas nada que impeça qualquer coisa.</p>
-        <p>O ponto mais importante de saber: <strong>museus nacionais são gratuitos</strong>. British Museum, National Gallery, V&A, Natural History Museum, Tate Modern — tudo sem cobrar entrada. Isso muda o cálculo do orçamento de forma significativa. Onde você gasta é em transporte, comida, atrações pontuais pagas e compras.</p>
-        <div class="info-cards">
-          <div class="info-card">
-            <span class="ic-label">Clima em setembro</span>
-            <p>13°C–20°C. Dias com sol mas imprevisíveis. Leve sempre jaqueta impermeável leve.</p>
-          </div>
-          <div class="info-card">
-            <span class="ic-label">Clima em outubro</span>
-            <p>8°C–15°C. Mais frio, mais cinza. Camadas são a chave. Anoitece às 18h no fim do mês.</p>
-          </div>
-          <div class="info-card">
-            <span class="ic-label">Moeda e pagamentos</span>
-            <p>Libra esterlina (GBP). Cartão contactless aceito em quase tudo — Tube, ônibus, pub, mercado.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- AT A GLANCE -->
-      <section id="glance">
-        <span class="section-label">Visão geral</span>
-        <h2>Resumo da <em>viagem</em></h2>
-        <div class="glance-grid">
-          <div class="glance-card"><span class="gc-label">Destino</span><div class="gc-val">Londres</div><div class="gc-sub">17 noites · única cidade</div></div>
-          <div class="glance-card"><span class="gc-label">Chegada · Saída</span><div class="gc-val">23 set → 09 out</div><div class="gc-sub">LCY, chegada 8h35</div></div>
-          <div class="glance-card"><span class="gc-label">Base</span><div class="gc-val">North Acton</div><div class="gc-sub">Casa da família · gratuito</div></div>
-          <div class="glance-card"><span class="gc-label">Viajantes</span><div class="gc-val">2 pessoas</div><div class="gc-sub">Casal</div></div>
-          <div class="glance-card"><span class="gc-label">Orçamento total</span><div class="gc-val">R$ 40.000</div><div class="gc-sub">Para dois · ~R$ 2.350/dia</div></div>
-          <div class="glance-card"><span class="gc-label">Transporte</span><div class="gc-val">Central Line</div><div class="gc-sub">Contactless · sem Oyster obrigatório</div></div>
-        </div>
-      </section>
-
-      <!-- MINI MAPA -->
-      <section id="mapa">
-        <span class="section-label">Orientação geográfica</span>
-        <h2>Londres a partir de <em>North Acton</em></h2>
-        <div class="map-container">
-          <svg width="680" height="360" viewBox="0 0 680 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="680" height="360" fill="#E6E2DC" rx="6"/>
-            <!-- Rio Tâmisa -->
-            <path d="M40 230 Q120 210 180 225 Q240 240 300 228 Q380 212 440 228 Q500 244 560 232 Q620 220 660 235" stroke="#9DA89A" stroke-width="14" fill="none" opacity="0.45"/>
-            <path d="M40 230 Q120 210 180 225 Q240 240 300 228 Q380 212 440 228 Q500 244 560 232 Q620 220 660 235" stroke="#DCD8D2" stroke-width="4" fill="none" opacity="0.7"/>
-            <text x="340" y="252" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="11" fill="#6B7960" opacity="0.7">Rio Tâmisa</text>
-
-            <!-- Central Line (linha vermelha tracejada) -->
-            <path d="M60 148 L160 148 L220 148 L300 155 L380 162 L460 155 L540 148 L620 148" stroke="#E32017" stroke-width="2" fill="none" opacity="0.2" stroke-dasharray="6,3"/>
-            <text x="340" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#E32017" opacity="0.5">— Central Line —</text>
-
-            <!-- NORTH ACTON — BASE -->
-            <circle cx="90" cy="148" r="10" fill="#1A1A1A" opacity="0.9"/>
-            <circle cx="90" cy="148" r="18" fill="#1A1A1A" opacity="0.08"/>
-            <rect x="12" y="116" width="96" height="20" rx="3" fill="#1A1A1A" opacity="0.12"/>
-            <text x="60" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#1A1A1A" opacity="0.8">✦ BASE</text>
-            <text x="90" y="174" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#1A1A1A" font-weight="600">North Acton</text>
-
-            <!-- NOTTING HILL / KENSINGTON (próximo) -->
-            <circle cx="160" cy="148" r="7" fill="#C2543C" opacity="0.85"/>
-            <circle cx="160" cy="148" r="13" fill="#C2543C" opacity="0.1"/>
-            <text x="160" y="132" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#1A1A1A" font-weight="500">Notting Hill</text>
-            <text x="160" y="142" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#C2543C" opacity="0.7">~2 paradas</text>
-
-            <!-- WEST END / SOHO -->
-            <circle cx="280" cy="155" r="7" fill="#C2543C" opacity="0.85"/>
-            <circle cx="280" cy="155" r="13" fill="#C2543C" opacity="0.1"/>
-            <text x="280" y="138" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#1A1A1A" font-weight="500">West End</text>
-            <text x="280" y="148" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#C2543C" opacity="0.7">~20 min</text>
-
-            <!-- THE CITY / BANK -->
-            <circle cx="400" cy="162" r="7" fill="#C2543C" opacity="0.85"/>
-            <circle cx="400" cy="162" r="13" fill="#C2543C" opacity="0.1"/>
-            <text x="400" y="145" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#1A1A1A" font-weight="500">The City</text>
-            <text x="400" y="155" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#C2543C" opacity="0.7">~30 min</text>
-
-            <!-- SHOREDITCH -->
-            <circle cx="480" cy="148" r="7" fill="#6B7960" opacity="0.85"/>
-            <circle cx="480" cy="148" r="13" fill="#6B7960" opacity="0.1"/>
-            <text x="480" y="132" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#1A1A1A" font-weight="500">Shoreditch</text>
-
-            <!-- SOUTH BANK -->
-            <circle cx="330" cy="270" r="7" fill="#6B7960" opacity="0.85"/>
-            <circle cx="330" cy="270" r="13" fill="#6B7960" opacity="0.1"/>
-            <text x="330" y="292" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#1A1A1A" font-weight="500">South Bank</text>
-
-            <!-- WESTMINSTER -->
-            <circle cx="240" cy="252" r="7" fill="#6B7960" opacity="0.85"/>
-            <circle cx="240" cy="252" r="13" fill="#6B7960" opacity="0.1"/>
-            <text x="220" y="272" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#1A1A1A" font-weight="500">Westminster</text>
-
-            <!-- GREENWICH -->
-            <circle cx="580" cy="258" r="7" fill="#8A6F45" opacity="0.85"/>
-            <circle cx="580" cy="258" r="13" fill="#8A6F45" opacity="0.1"/>
-            <text x="580" y="278" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#1A1A1A" font-weight="500">Greenwich</text>
-
-            <!-- LCY -->
-            <rect x="628" y="198" width="44" height="18" rx="3" fill="#1A1A1A" opacity="0.12"/>
-            <text x="650" y="211" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#1A1A1A" opacity="0.7">✈ LCY</text>
-
-            <!-- Linhas pontilhadas da base -->
-            <line x1="90" y1="148" x2="160" y2="148" stroke="#C2543C" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"/>
-            <line x1="160" y1="148" x2="280" y2="155" stroke="#6B7960" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
-            <line x1="280" y1="155" x2="400" y2="162" stroke="#6B7960" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
-            <line x1="400" y1="162" x2="480" y2="148" stroke="#6B7960" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
-            <line x1="280" y1="155" x2="240" y2="252" stroke="#6B7960" stroke-width="1" stroke-dasharray="4,4" opacity="0.25"/>
-            <line x1="330" y1="270" x2="400" y2="162" stroke="#6B7960" stroke-width="1" stroke-dasharray="4,4" opacity="0.25"/>
-            <line x1="580" y1="258" x2="480" y2="148" stroke="#6B7960" stroke-width="1" stroke-dasharray="4,4" opacity="0.25"/>
-
-            <!-- Legenda -->
-            <circle cx="48" cy="320" r="5" fill="#1A1A1A" opacity="0.8"/>
-            <text x="58" y="324" font-family="Inter, sans-serif" font-size="10" fill="#4A4A47">Base (North Acton)</text>
-            <circle cx="48" cy="338" r="5" fill="#C2543C" opacity="0.8"/>
-            <text x="58" y="342" font-family="Inter, sans-serif" font-size="10" fill="#4A4A47">Polo principal do dia</text>
-            <circle cx="220" cy="320" r="5" fill="#6B7960" opacity="0.8"/>
-            <text x="230" y="324" font-family="Inter, sans-serif" font-size="10" fill="#4A4A47">Bairros complementares</text>
-            <circle cx="220" cy="338" r="5" fill="#8A6F45" opacity="0.8"/>
-            <text x="230" y="342" font-family="Inter, sans-serif" font-size="10" fill="#4A4A47">Escapada de dia inteiro</text>
-          </svg>
-        </div>
-      </section>
-
-      <!-- ROTEIRO -->
-      <section id="roteiro">
-        <span class="section-label">Roteiro reorganizado por polo geográfico</span>
-        <h2>Dia a <em>dia</em></h2>
-        <p>Os dias foram agrupados de forma que, quando você vai para West London, aproveita tudo que está ali perto. Quando vai para o centro ou leste, não volta ao meio-caminho. Isso poupa ~30-40 min de deslocamento por dia e cansa menos.</p>
-
-        <!-- ═══ POLO 1: CHEGADA ═══ -->
-        <div class="zone-block">
-          <div class="zone-header">
-            <div class="zone-number">I</div>
-            <div class="zone-info">
-              <span class="zone-label">Polo · Chegada</span>
-              <div class="zone-title">Dia 1 — <em>instalação</em></div>
-              <div class="zone-sub">LCY → North Acton · orientação local</div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">01</div>
-            <div class="day-meta"><span class="day-badge">Dia 01</span><span class="day-date">ter · 23 set</span></div>
-            <div class="day-title">Chegada — <em>primeiros passos</em></div>
-            <div class="day-zone">LCY → North Acton</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              DLR + Central Line · ~50 min · ~£4
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã · chegada</span>
-              </div>
-              <div class="period-content">
-                <p>Aterrissagem às 8h35 no LCY. Aeroporto pequeno e rápido. Passe o cartão contactless na catraca do DLR. Rota: DLR até Bank → Central Line (direção West Ruislip) → desça em North Acton. Direto, sem baldeação no Tube.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde · orientação</span>
-              </div>
-              <div class="period-content">
-                <p>Deixar as malas, respirar. Explore o bairro a pé — Acton High Street tem mercado, cafés, farmácia, tudo que precisa. Ative o cartão contactless no primeiro Tube (ou compre chip inglês se ainda não tiver). Localize a estação North Acton e anote o caminho.</p>
-                <div class="extra-layer">
-                  <span class="el-label">Camada extra</span>
-                  <p>Acton Park fica a 10 min a pé — um parque local típico, sem turistas. Boa primeira caminhada para desentorpecer após o voo e ver como é a vizinhança.</p>
+    <!-- SEÇÃO 1: HERO / GANCHO PRINCIPAL -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-conteudo">
+                <div class="hero-texto">
+                    <h1>Você é goleiro e sente que <span class="destaque">trava na hora da defesa decisiva?</span></h1>
+                    <p class="subtitulo">Descubra o método <strong>Reflexo de Gato™</strong> — o sistema de treino de academia que transforma goleiros lentos em paredões explosivos como <strong>Buffon, Courtois e Neuer</strong>.</p>
+                    <a href="#oferta" class="btn-cta-grande">QUERO COMPRAR AGORA 🧤</a>
                 </div>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite · chegada leve</span>
-              </div>
-              <div class="period-content">
-                <p>Jantar num pub de bairro em Acton. Não se aventure longe — o jet lag de +4h vai cobrar a fatura. Durma cedo.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ═══ POLO 2: WEST LONDON ═══ -->
-        <div class="zone-block">
-          <div class="zone-header">
-            <div class="zone-number">II</div>
-            <div class="zone-info">
-              <span class="zone-label">Polo · West London</span>
-              <div class="zone-title">Dias 2–4 — <em>na porta de casa</em></div>
-              <div class="zone-sub">Notting Hill · Kensington · Shepherd's Bush · Holland Park</div>
-              <div style="margin-top:6px;">
-                <span class="tube-badge"><span class="tube-dot central"></span> Central até Holland Park ou Notting Hill Gate</span>
-                <span class="tube-badge" style="margin-left:8px;"><span class="tube-dot district"></span> District via Ealing Broadway</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">02</div>
-            <div class="day-meta"><span class="day-badge">Dia 02</span><span class="day-date">qua · 24 set</span></div>
-            <div class="day-title">Notting Hill e <em>Portobello Road</em></div>
-            <div class="day-zone">Notting Hill · Holland Park · Westbourne Grove</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central Line até Holland Park · 2 paradas · ~6 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Portobello Road Market</strong> — funciona todos os dias mas quarta tem bancas abertas de antiguidades e roupas. Chegue às 10h. As casinhas coloridas pastel são o cenário mais clássico de Notting Hill. Bom para um café da manhã e primeiros achados de compras: louças antigas, prints, moda vintage.</p>
-                <div class="tip-box"><p><strong>Atenção:</strong> mercado de antiguidades plenas só aos sábados. Na quarta tem movimento moderado — mais tranquilo para explorar sem multidão.</p></div>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Almoço na <strong>Westbourne Grove</strong> — boa cena de restaurantes locais, nível médio-alto, bom custo-benefício pra um almoço. Depois, <strong>Holland Park</strong>: o mais elegante e menos lotado dos parques de West London. O jardim japonês Kyoto Garden, que fica dentro do parque, é genuinamente bonito e quase sempre vazio.</p>
-                <div class="extra-layer">
-                  <span class="el-label">Camada extra — praticamente na sua porta</span>
-                  <p>Shepherd's Bush Market fica a 3 paradas da Central — mercado multicultural barato, frequentado por moradores locais da comunidade africana e caribenha. Diferente de qualquer mercado turístico. Boa visão de West London real.</p>
+                <div class="hero-imagem">
+                    <img src="imagens/tobiasdefendendo.jpg" alt="Tobias defendendo no gol" />
                 </div>
-              </div>
             </div>
+        </div>
+    </section>
 
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Notting Hill tem pubs excelentes. The Churchill Arms é o mais fotográfico da cidade — coberto de flores na fachada. Serve comida tailandesa curiosamente boa. Jantar e uma pint, tudo no mesmo lugar.</p>
-              </div>
-            </div>
-          </div>
+    <!-- SEÇÃO 2: DOR -->
+    <section class="dor">
+        <div class="container">
+            <h2>Se você é goleiro, provavelmente já passou por isso:</h2>
+            <ul class="lista-dor">
+                <li>❌ Bola passa do seu lado e você sente que reagiu <strong>tarde demais</strong></li>
+                <li>❌ Cansa rápido nos treinos e nos jogos longos</li>
+                <li>❌ Falta explosão pra sair do chão nos cruzamentos</li>
+                <li>❌ Sente o corpo travado, sem mobilidade pra defesas no canto</li>
+                <li>❌ Vê outros goleiros voando e se pergunta: <em>"o que eles têm que eu não tenho?"</em></li>
+            </ul>
+            <p class="frase-impacto">A verdade é dura: <strong>treinar só no gol não basta.</strong> Os melhores do mundo treinam o corpo na academia com método específico — e é isso que ninguém te conta.</p>
+        </div>
+    </section>
 
-          <div class="day-block">
-            <div class="day-number">03</div>
-            <div class="day-meta"><span class="day-badge">Dia 03</span><span class="day-date">qui · 25 set</span></div>
-            <div class="day-title">Kensington — <em>museus em sequência</em></div>
-            <div class="day-zone">South Kensington · Knightsbridge · Chelsea</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central → troca District em Ealing Broadway → South Kensington · ~25 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Natural History Museum</strong> — gratuito, abre às 10h. Chegue cedo: o prédio e o acervo são igualmente impressionantes. Dinossauros, baleia azul suspensa, geologia. Foque nas alas principais, 1h30-2h.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Logo ao lado: <strong>Victoria and Albert Museum (V&A)</strong> — gratuito. O maior museu de design e artes decorativas do mundo. Se gostam de moda, arquitetura, têxteis, joias históricas — é aqui. Foque nas alas de moda, cerâmica asiática e joias históricas da realeza. Café da tarde no jardim coberto do museu.</p>
-                <div class="extra-layer">
-                  <span class="el-label">Camada extra</span>
-                  <p>O V&A tem uma ala de joias históricas da realeza europeia que praticamente ninguém acha. É um dos acervos mais impressionantes do museu e quase sempre está vazio.</p>
+    <!-- SEÇÃO 3: SOLUÇÃO / APRESENTAÇÃO DO MÉTODO -->
+    <section class="solucao">
+        <div class="container">
+            <div class="solucao-grid">
+                <div class="solucao-texto">
+                    <h2>Apresentando o <span class="destaque">Reflexo de Gato™</span></h2>
+                    <p class="lead">O primeiro método de treino de academia <strong>100% desenhado para goleiros</strong> — focado nos 3 pilares que separam o goleiro amador do profissional de elite:</p>
                 </div>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Chelsea, King's Road — jantar num bistrô italiano ou japonês de bairro. Faixa média-alta mas razoável. Ou voltar para casa — dois museus grandes num dia já é bastante.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">04</div>
-            <div class="day-meta"><span class="day-badge">Dia 04</span><span class="day-date">sex · 26 set</span></div>
-            <div class="day-title">Hyde Park e <em>Harrods</em></div>
-            <div class="day-zone">Hyde Park · Knightsbridge · Mayfair</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central até Holland Park, caminhada até o parque · ~10 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Hyde Park</strong> de manhã — caminhe pela beira do Serpentine Lake. Em setembro a luz da manhã no lago é bonita. O Serpentine Gallery dentro do parque tem exposições de arte contemporânea gratuitas. Café na orla.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Harrods</strong> — o food hall no subsolo é genuinamente impressionante; o resto é vitrine cara. Entre ciente disso. Depois, <strong>Mayfair</strong> — Bond Street, Mount Street, galerias de arte. O Liberty London em Regent Street (a caminho de volta) vale entrar só pelo prédio tudor.</p>
-                <div class="tip-box"><p><strong>Harrods sem culpa:</strong> caro, lotado, vendedores insistentes — mas o food hall e a arquitetura valem a visita. Você está em Londres pela primeira vez. Pode entrar.</p></div>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Se quiserem gastar mais numa noite especial — Mayfair tem restaurantes de alto nível. Ou um coquetel no bar do Connaught Hotel — mesmo sem jantar, é a experiência do lugar.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ═══ POLO 3: CENTRO WEST / SOHO ═══ -->
-        <div class="zone-block">
-          <div class="zone-header">
-            <div class="zone-number">III</div>
-            <div class="zone-info">
-              <span class="zone-label">Polo · Centro Oeste</span>
-              <div class="zone-title">Dias 5–7 — <em>o coração turístico</em></div>
-              <div class="zone-sub">West End · Soho · Westminster · Trafalgar · Marylebone</div>
-              <div style="margin-top:6px;">
-                <span class="tube-badge"><span class="tube-dot central"></span> Central direto · Oxford Circus em 20 min</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">05</div>
-            <div class="day-meta"><span class="day-badge">Dia 05</span><span class="day-date">sáb · 27 set</span></div>
-            <div class="day-title">Portobello Road <em>aos sábados</em></div>
-            <div class="day-zone">Notting Hill · Portobello Road · Carnaby Street</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central até Holland Park · 2 paradas · ~6 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Portobello Road Market ao sábado pleno</strong> — o dia certo. Todos os vendedores de antiguidades abertos, mais movimento, mais achado. Chegue antes das 10h. Separe £30-80 se quiser levar algo: louças, bijuterias, prints emoldurados, roupas vintage.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Almoço em Notting Hill, depois Central Line até Oxford Circus. Tarde de compras na <strong>Regent Street</strong> e <strong>Carnaby Street</strong> — a segunda é mais autoral e interessante que Oxford Street. Liberty London está na esquina.</p>
-                <div class="extra-layer">
-                  <span class="el-label">Camada extra</span>
-                  <p>Marylebone High Street fica a 10 min a pé de Oxford Street. Tem o Daunt Books — uma das livrarias mais bonitas do mundo, prédio eduardiano com galerias de madeira, especializada em viagens. Vale uma visita só pra ver.</p>
+                <div class="solucao-imagem">
+                    <img src="imagens/reflexodegato.jpg" alt="Reflexo de Gato - método" />
                 </div>
-              </div>
             </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Soho à noite — o melhor bairro de Londres para jantar com variedade: japonês, italiano, peruano, tailandês, tudo na mesma rua. Depois, drinque num bar de Soho ou Piccadilly Circus iluminado à noite.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">06</div>
-            <div class="day-meta"><span class="day-badge">Dia 06</span><span class="day-date">dom · 28 set</span></div>
-            <div class="day-title">Westminster — <em>o núcleo histórico</em></div>
-            <div class="day-zone">Westminster · St James's · Buckingham Palace</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central até Bond Street → Victoria Line até Victoria · ~25 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Westminster Abbey</strong> — entrada ~£27, abre às 9h30. Chegue no horário: o local onde coroações acontecem há 1.000 anos. Separe 1h30. Depois, Palácio de Westminster e Big Ben por fora — fotos obrigatórias.</p>
-                <div class="tip-box"><p><strong>Troca da guarda:</strong> acontece às 11h em dias alternados, em frente ao Buckingham Palace. Se cair em domingo, vale passar por lá antes de entrar na Abbey.</p></div>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Caminhe pelo <strong>St James's Park</strong> — o mais antigo parque real de Londres, com flamingos. Siga até <strong>Buckingham Palace</strong>. É o cartão-postal obrigatório — é turístico, mas você vai querer a foto. Depois explore <strong>St James's</strong> — Jermyn Street, camisarias históricas desde 1700.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite · Sunday Roast</span>
-              </div>
-              <div class="period-content">
-                <p>Domingo é o dia do <strong>Sunday Roast</strong> — o prato mais britânico da semana. Qualquer pub decente serve: frango assado, batata assada, Yorkshire pudding, molho. £16-22 por pessoa. Faça isso pelo menos uma vez. É ritual cultural, não só refeição.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">07</div>
-            <div class="day-meta"><span class="day-badge">Dia 07</span><span class="day-date">seg · 29 set</span></div>
-            <div class="day-title">National Gallery e <em>Trafalgar</em></div>
-            <div class="day-zone">Trafalgar · West End · Covent Garden · Soho</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central direto até Holborn → Charing Cross · ~22 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>National Gallery</strong> — gratuito. Um dos maiores acervos de pintura europeia do mundo: Van Gogh, Vermeer, Caravaggio, Turner, Monet. Foque nas salas italianas e impressionistas. Planeje 2h.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Almoço em Chinatown ou Soho. Tarde em <strong>Covent Garden</strong> — mercado coberto, shows de rua bons à tarde. Dois quarteirões adiante fica <strong>Neal's Yard</strong>, pátio colorido escondido que quase ninguém acha sem procurar.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite · West End</span>
-              </div>
-              <div class="period-content">
-                <p>West End à noite — bilhetes de teatro com desconto no TKTS em Leicester Square. Chegue até 1h antes do espetáculo para ver o que tem disponível. Desconto de até 50% no dia. Boa noite para tentar um musical ou peça.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PULL QUOTE -->
-        <div class="pullquote">
-          <q>De North Acton, Notting Hill está a 6 minutos. Em 20 minutos você está no centro. Essa é a vantagem silenciosa de quem fica na casa certa.</q>
-        </div>
-
-        <!-- ═══ POLO 4: CENTRO / SOUTH BANK ═══ -->
-        <div class="zone-block">
-          <div class="zone-header">
-            <div class="zone-number">IV</div>
-            <div class="zone-info">
-              <span class="zone-label">Polo · Centro e South Bank</span>
-              <div class="zone-title">Dias 8–10 — <em>o Tâmisa</em></div>
-              <div class="zone-sub">British Museum · South Bank · Tate Modern · Borough Market · St Paul's</div>
-              <div style="margin-top:6px;">
-                <span class="tube-badge"><span class="tube-dot central"></span> Central até Holborn ou Bank</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">08</div>
-            <div class="day-meta"><span class="day-badge">Dia 08</span><span class="day-date">ter · 30 set</span></div>
-            <div class="day-title">British Museum e <em>Bloomsbury</em></div>
-            <div class="day-zone">Bloomsbury · Holborn · Covent Garden</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central direto até Holborn · ~22 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>British Museum</strong> — chegue às 10h. Gratuito. Foque nas grandes salas: Egípcio (Pedra de Roseta, múmias), Grego (frisos do Parthenon), Mesopotâmia. O átrio coberto de vidro é uma das arquiteturas mais bonitas de Londres. Planeje 2h30-3h.</p>
-                <div class="tip-box"><p>Reserve entrada online antecipadamente — gratuito mas com controle de fluxo em temporada de outono.</p></div>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Almoço em Museum Street. Tarde em <strong>Bloomsbury</strong> — bairro literário e universitário. A dois quarteirões: Lambs Conduit Street, uma das ruas mais bonitas e menos turísticas do centro, com lojas independentes e cafés.</p>
-                <div class="extra-layer">
-                  <span class="el-label">Camada extra</span>
-                  <p>O Museum of London Docklands — mais adiante perto do Bank — tem exposição permanente e gratuita sobre a história do comércio e do porto de Londres. Não é o museu mais famoso mas é um dos mais honestos sobre o que a cidade realmente foi.</p>
+            
+            <div class="pilares">
+                <div class="pilar">
+                    <h3>⚡ EXPLOSÃO</h3>
+                    <p>Saídas mais rápidas do chão, impulsão para cruzamentos altos e potência nas defesas em canto.</p>
                 </div>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Jantar no Soho ou Chinatown — a dois passos de Holborn. Chinatown: £10-15 por pessoa, animado, sem frescura. Boa opção depois de um dia pesado de museu.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">09</div>
-            <div class="day-meta"><span class="day-badge">Dia 09</span><span class="day-date">qua · 01 out</span></div>
-            <div class="day-title">Borough Market e <em>Tate Modern</em></div>
-            <div class="day-zone">Bankside · Southwark · South Bank</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central até Bank → Jubilee até London Bridge · ~28 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Borough Market</strong> — abre às 10h na semana. O melhor mercado de comida de Londres. Café da manhã aqui: torrada com manteiga de trufa, pastel de nata, ovos beneditinos — o que chamar. Orçamento: £8-12 por pessoa.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Tate Modern</strong> — 5 min do Borough Market. Gratuito. A Turbine Hall e 2-3 andares escolhidos. Vista do terraço: St Paul's e a City ao norte — uma das fotos mais clássicas de Londres. Caminhe pela orla do South Bank em direção à Millennium Bridge.</p>
-                <div class="extra-layer">
-                  <span class="el-label">Camada extra</span>
-                  <p>Bermondsey Street, 10 min da Tate: rua estreita com galerias independentes e o Fashion &amp; Textile Museum. É o London criativo que ficou de fora dos guias mais populares.</p>
+                <div class="pilar">
+                    <h3>🐾 REFLEXO</h3>
+                    <p>Treine seu sistema neuromuscular para reagir em milissegundos — como um gato selvagem.</p>
                 </div>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Dishoom em Borough — fila mas vale, é o melhor indiano acessível da cidade. Ou o Flat Iron: £15 o prato principal de carne, excelente custo-benefício.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">10</div>
-            <div class="day-meta"><span class="day-badge">Dia 10</span><span class="day-date">qui · 02 out</span></div>
-            <div class="day-title">Tower of London, <em>The City</em> e St Paul's</div>
-            <div class="day-zone">Tower Hill · The City · Blackfriars · Fleet Street</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central até Bank · ~30 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Tower of London</strong> — abre às 9h, ~£30 por pessoa, <strong>reserve online</strong>. Joias da coroa, história da torre, Beefeaters. Planeje 2h30. Depois cruzar a <strong>Tower Bridge</strong> a pé — de graça.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Caminhe pelo <strong>The City</strong> — o bairro financeiro histórico, quase deserto de turistas. A <strong>Leadenhall Market</strong>: mercado vitoriano com teto pintado e arcos dourados, cenário de Harry Potter. Depois <strong>St Paul's Cathedral</strong> por fora — a cúpula de Wren domina o skyline.</p>
-                <div class="extra-layer">
-                  <span class="el-label">Camada extra</span>
-                  <p>Dentro de Temple, a 15 min a pé, fica o Temple Church — a mais antiga das igrejas medievais de Londres (século XII), onde se passa parte de O Código Da Vinci. Gratuito entrar. Quase nenhum turista chega lá.</p>
+                <div class="pilar">
+                    <h3>🤸 MOBILIDADE</h3>
+                    <p>Corpo solto, articulações fortes e amplitude total para defesas impossíveis.</p>
                 </div>
-              </div>
             </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Blackfriars ou Southbank — boa concentração de restaurantes de preço médio com vista para o Tâmisa. Última noite antes dos dias de East London — pode ser o jantar com vista do rio.</p>
-              </div>
-            </div>
-          </div>
         </div>
+    </section>
 
-        <!-- ═══ POLO 5: NORTH / CAMDEN ═══ -->
-        <div class="zone-block">
-          <div class="zone-header">
-            <div class="zone-number">V</div>
-            <div class="zone-info">
-              <span class="zone-label">Polo · North London</span>
-              <div class="zone-title">Dias 11–12 — <em>norte musical</em></div>
-              <div class="zone-sub">Camden · Primrose Hill · Regent's Park</div>
-              <div style="margin-top:6px;">
-                <span class="tube-badge"><span class="tube-dot central"></span> Central até Oxford Circus → Victoria até Warren Street → Northern até Camden</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">11</div>
-            <div class="day-meta"><span class="day-badge">Dia 11</span><span class="day-date">sex · 03 out</span></div>
-            <div class="day-title">Camden e <em>Primrose Hill</em></div>
-            <div class="day-zone">Camden · Primrose Hill Village</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central + Northern Line · ~35 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Camden Market</strong> — o mais punk e alternativo de Londres. Street food de todo o mundo espalhado pelos canais. Chegue cedo antes de lotar. Bom para café da manhã variado e uma caminhada pelos canais.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>15 min a pé de Camden sobe o <strong>Primrose Hill</strong> — uma colina dentro de um parque pequeno com a vista mais bonita de Londres. Em outubro, com folhagem começando a dourar, é particularmente bonito. Sem fila, sem taxa, sem turista.</p>
-                <div class="extra-layer">
-                  <span class="el-label">Camada extra</span>
-                  <p>Desça pelo lado de Primrose Hill Village — cafés independentes, padarias artesanais, boutiques. É como ver um Londres residencial e calmo que não existe nos guias.</p>
+    <!-- SEÇÃO 4: O QUE VOCÊ VAI RECEBER -->
+    <section class="oferta-conteudo">
+        <div class="container">
+            <h2>O que você vai receber dentro do método:</h2>
+            <div class="lista-entrega">
+                <div class="item-entrega">
+                    <h3>📘 Protocolo Completo Reflexo de Gato™</h3>
+                    <p>Treinos estruturados de <strong>45 a 60 minutos, 3x por semana</strong>, executados na academia. Cada sessão é montada com o equilíbrio exato entre <strong>mobilidade, força funcional, potência e velocidade</strong>.</p>
                 </div>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite · música ao vivo</span>
-              </div>
-              <div class="period-content">
-                <p>Volte para Camden à noite — The Jazz Café, o Dublin Castle, o Electric Ballroom. Verifique a programação antes: tem show quase toda noite. É a noite de música ao vivo mais fácil de fazer em Londres sem gastar muito.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">12</div>
-            <div class="day-meta"><span class="day-badge">Dia 12</span><span class="day-date">sáb · 04 out</span></div>
-            <div class="day-title">Portobello <em>de volta</em> + dia livre</div>
-            <div class="day-zone">Notting Hill · ou escolha livre</div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã / Tarde / Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Dia propositalmente semi-livre. Opções: revisitar Portobello Road no sábado cheio (se o dia 2 não foi suficiente para compras), fazer o St Paul's Cathedral por dentro (~£23) se ficou de fora, ou simplesmente descansar. São 12 dias intensos — um dia mais leve em algum momento é necessário.</p>
-                <div class="tip-box"><p><strong>London Eye:</strong> se está na lista, reserve online agora para este dia. ~£35-40 por pessoa. Fila enorme sem reserva. Vista boa, mas o terraço da Tate Modern entrega resultado semelhante de graça.</p></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ═══ POLO 6: EAST LONDON ═══ -->
-        <div class="zone-block">
-          <div class="zone-header">
-            <div class="zone-number">VI</div>
-            <div class="zone-info">
-              <span class="zone-label">Polo · East London</span>
-              <div class="zone-title">Dias 13–14 — <em>o leste criativo</em></div>
-              <div class="zone-sub">Shoreditch · Spitalfields · Brick Lane · Greenwich</div>
-              <div style="margin-top:6px;">
-                <span class="tube-badge"><span class="tube-dot central"></span> Central até Liverpool Street · ~30 min</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">13</div>
-            <div class="day-meta"><span class="day-badge">Dia 13</span><span class="day-date">dom · 05 out</span></div>
-            <div class="day-title">Shoreditch — <em>domingo no East</em></div>
-            <div class="day-zone">Spitalfields · Brick Lane · Shoreditch</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central até Liverpool Street · ~30 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã cedo</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Columbia Road Flower Market</strong> — funciona apenas aos domingos das 8h às 14h. Chegue às 9h. Floricultura de rua muito fotogênica: flores, plantas, ervas. Em seguida, <strong>Spitalfields Market</strong> — domingo é o melhor dia, mais bancas abertas.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Arte de rua no <strong>Shoreditch</strong> — Brick Lane tem murais de Banksy e dezenas de outros artistas. Caminhe sem pressa por Redchurch Street, galerias independentes, lojas criativas. É o London jovem e criativo.</p>
-                <div class="extra-layer">
-                  <span class="el-label">Camada extra</span>
-                  <p>Brick Lane tem os melhores curries baratos de Londres — a rua inteira é do bairro bangladeshiano, com <em>all-you-can-eat</em> por £12-15. Almoço ou jantar aqui é uma das refeições mais baratas e saborosas da viagem.</p>
+                <div class="item-entrega">
+                    <h3>🎥 Vídeos de Execução</h3>
+                    <p>Cada exercício demonstrado em vídeo para você executar com a técnica perfeita — sem risco de lesão.</p>
                 </div>
-              </div>
+                <div class="item-entrega">
+                    <h3>📊 Planilha de Evolução</h3>
+                    <p>Acompanhe seu progresso semana a semana e veja na prática o quanto está ficando mais explosivo.</p>
+                </div>
+                <div class="item-entrega">
+                    <h3>🧠 Bônus: Ebook "Mentalidade de Goleiro"</h3>
+                    <p>O que diferencia o goleiro que <em>aguenta a pressão</em> do que <em>desaba na hora H</em>. Os princípios mentais que aprendi disputando Copa do Brasil e jogando profissionalmente.</p>
+                </div>
             </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Shoreditch à noite: bares, arte, restaurantes variados. Ottolenghi tem unidade por aqui — fila mas vale. Ou os asiáticos modernos da Curtain Road.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">14</div>
-            <div class="day-meta"><span class="day-badge">Dia 14</span><span class="day-date">seg · 06 out</span></div>
-            <div class="day-title">Greenwich — <em>o meridiano e o rio</em></div>
-            <div class="day-zone">Greenwich · DLR · Thames Clipper</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central até Bank → DLR até Greenwich · ~40 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>Greenwich Market</strong> para café da manhã. Depois suba até o <strong>Royal Observatory</strong> — aqui fica o meridiano de Greenwich, a linha que divide o mundo ao meio. ~£17. O National Maritime Museum (gratuito) ao lado tem um dos melhores acervos de história naval do mundo.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Desça pelo <strong>Greenwich Park</strong> até o Tâmisa — a vista da colina de volta para Canary Wharf é uma das mais fotográficas de Londres. Volte pelo <strong>Thames Clipper</strong> (~£8) — o barco que faz linha no rio. A vista voltando para a cidade no fim de tarde de outubro é uma das melhores £8 gastas na viagem.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Canary Wharf de noite — o bairro financeiro novo, todo espelhado, parece quase Hong Kong. Bares e restaurantes bons, vista dos arranha-céus iluminados. Volta para casa pelo DLR → Central.</p>
-              </div>
-            </div>
-          </div>
         </div>
+    </section>
 
-        <!-- ═══ POLO 7: DIAS FINAIS ═══ -->
-        <div class="zone-block">
-          <div class="zone-header">
-            <div class="zone-number">VII</div>
-            <div class="zone-info">
-              <span class="zone-label">Polo · Reta final</span>
-              <div class="zone-title">Dias 15–17 — <em>fechar bem</em></div>
-              <div class="zone-sub">Pendências, compras finais, despedida e partida</div>
+    <!-- SEÇÃO 5: OFERTA / PREÇO -->
+    <section class="oferta" id="oferta">
+        <div class="container">
+            <h2>Quanto custa virar um <span class="destaque">paredão</span>?</h2>
+            <p class="lead">Um preparador físico especializado cobra de <strong>R$ 300 a R$ 800 por mês</strong>. Um curso presencial pode passar de R$ 2.000.</p>
+            <p class="lead">Mas você não vai pagar nada perto disso.</p>
+            
+            <div class="caixa-preco">
+                <p class="preco-antigo">De <s>R$ 197</s></p>
+                <p class="preco-atual">Por apenas <strong>R$ 47</strong></p>
+                <p class="preco-detalhe">⚠️ Preço de lançamento — válido por tempo limitado</p>
+                <a href="https://pay.hotmart.com/U105629103O?off=cwkll4um&checkoutMode=10" target="_blank" class="btn-cta-grande">QUERO COMPRAR AGORA 🧤</a>
             </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">15</div>
-            <div class="day-meta"><span class="day-badge">Dia 15</span><span class="day-date">ter · 07 out</span></div>
-            <div class="day-title">St Paul's por dentro e <em>Temple Church</em></div>
-            <div class="day-zone">St Paul's · Fleet Street · Temple · Embankment</div>
-            <div class="commute-tag">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#6B7960" stroke-width="1"/><path d="M6 3v3l2 2" stroke="#6B7960" stroke-width="1" stroke-linecap="round"/></svg>
-              Central até St Paul's · ~28 min
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã</span>
-              </div>
-              <div class="period-content">
-                <p><strong>St Paul's Cathedral</strong> — ~£23. Suba até a Whispering Gallery e até o terraço externo — vista de 360°. Planeje 2h.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.5" y1="10" x2="19" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="3.05" y1="3.05" x2="4.8" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="15.2" y1="15.2" x2="16.95" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="16.95" y1="3.05" x2="15.2" y2="4.8" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="4.8" y1="15.2" x2="3.05" y2="16.95" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/></svg>
-                <span class="period-label">Tarde</span>
-              </div>
-              <div class="period-content">
-                <p>Desça pela Millennium Bridge até a Tate, caminhada na orla. Explore <strong>Temple</strong> — os <em>Inns of Court</em>, pátios medievais dos advogados britânicos. Dentro fica o <strong>Temple Church</strong> (século XII, O Código Da Vinci). Gratuito entrar.</p>
-              </div>
-            </div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 10.5A6.5 6.5 0 0 1 7 3.2 6.5 6.5 0 1 0 15 10.5z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><circle cx="14" cy="5" r="1" fill="#C2543C" opacity="0.4"/><circle cx="16" cy="8" r="0.6" fill="#C2543C" opacity="0.3"/></svg>
-                <span class="period-label">Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Jantar de penúltima noite — escolha o restaurante que mais ficou na cabeça ao longo da viagem e ainda não foi. O Soho resolve qualquer culinária.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">16</div>
-            <div class="day-meta"><span class="day-badge">Dia 16</span><span class="day-date">qua · 08 out</span></div>
-            <div class="day-title">Último dia — <em>sem agenda</em></div>
-            <div class="day-zone">À escolha · sem pressão</div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã / Tarde / Noite</span>
-              </div>
-              <div class="period-content">
-                <p>Arrume as malas. Café da manhã caprichado. Volte a algum lugar favorito da viagem para uma última passagem. Compras finais na Acton High Street ou no West End. Não planeje nada pesado — você vai estar com os pés gastos e a memória cheia. O último dia é para fechar com calma.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="day-block">
-            <div class="day-number">17</div>
-            <div class="day-meta"><span class="day-badge">Dia 17</span><span class="day-date">qui · 09 out</span></div>
-            <div class="day-title">Partida — <em>LCY</em></div>
-            <div class="day-zone">North Acton → London City Airport</div>
-
-            <div class="period">
-              <div class="period-header">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="#C2543C" stroke-width="1.3" fill="none" opacity="0.65"/><line x1="10" y1="1" x2="10" y2="3.5" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="10" y1="16.5" x2="10" y2="19" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><line x1="1" y1="10" x2="3.5" y2="10" stroke="#C2543C" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/><path d="M2 16 Q6 14 10 19" stroke="#C2543C" stroke-width="1" fill="none" opacity="0.4" stroke-dasharray="2,2"/></svg>
-                <span class="period-label">Manhã · partida</span>
-              </div>
-              <div class="period-content">
-                <p>Central Line de North Acton até Bank → DLR até LCY. Chegue com 2h de antecedência. O aeroporto é pequeno — 2h é confortável, sem correria. Daqui segue para Espanha e Portugal.</p>
-              </div>
-            </div>
-          </div>
         </div>
+    </section>
 
-      </section>
-
-      <!-- PULL QUOTE 2 -->
-      <div class="pullquote">
-        <q>Museus nacionais de Londres são gratuitos. Isso não é detalhe — é o que permite que uma viagem econômica tenha dias de nível mundial sem gastar um centavo em entrada.</q>
-      </div>
-
-      <!-- ORÇAMENTO -->
-      <section id="orcamento">
-        <span class="section-label">Custos estimados</span>
-        <h2>Orçamento <em>estimado</em></h2>
-        <p>Premissas: 17 dias, 2 pessoas, hospedagem gratuita (casa da família em North Acton), câmbio estimado em R$6,50/£1. Transporte reduzido por agrupamento geográfico dos dias.</p>
-        <table class="budget-table">
-          <thead>
-            <tr><th>Categoria</th><th>Detalhe</th><th>Estimativa (£)</th><th>Em reais</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Transporte local</td><td>Contactless, ~£5/dia/pessoa × 17 × 2 (agrupamento reduz viagens)</td><td>£170</td><td>R$ 1.105</td></tr>
-            <tr><td>Alimentação</td><td>~£35/dia/pessoa × 17 dias × 2 (mix casa + restaurante)</td><td>£1.190</td><td>R$ 7.735</td></tr>
-            <tr><td>Atrações pagas</td><td>Tower of London, Westminster Abbey, St Paul's, Royal Observatory, Thames Clipper</td><td>£230</td><td>R$ 1.495</td></tr>
-            <tr><td>Compras</td><td>Roupas, mercados, souvenirs (estimativa moderada)</td><td>£820</td><td>R$ 5.330</td></tr>
-            <tr><td>Lazer / shows</td><td>West End TKTS, pubs, música ao vivo</td><td>£200</td><td>R$ 1.300</td></tr>
-            <tr><td>Imprevistos / extras</td><td>Jantares melhores, emergências, achados</td><td>£250</td><td>R$ 1.625</td></tr>
-            <tr class="total"><td colspan="2"><strong>Total estimado · 2 pessoas · 17 dias</strong></td><td><strong>£2.860</strong></td><td><strong>R$ 18.590</strong></td></tr>
-          </tbody>
-        </table>
-        <p style="margin-top:16px; font-size:13px; color: var(--musgo);">Sobra ~R$ 21.400 do orçamento total para Espanha + Portugal. Câmbio usado: R$6,50/£1 — ajuste conforme cotação real na época da viagem.</p>
-      </section>
-
-      <!-- SEGURANÇA -->
-      <section id="seguranca">
-        <span class="section-label">Precauções</span>
-        <h2>Segurança e <em>bom senso</em></h2>
-        <p>Norte Acton é bairro residencial tranquilo — nível de segurança bom para padrão de Londres. Sem grandes ressalvas para a base. Os alertas abaixo são para o deslocamento pela cidade.</p>
-        <div class="safety-grid">
-          <div class="safety-card">
-            <h4>Golpes comuns</h4>
-            <ul>
-              <li>Não troque libras com cambista na rua — use ATM de banco</li>
-              <li>Batedores de bolso no Tube Central Line e Oxford Street — carteira na frente</li>
-              <li>Táxis não licenciados na saída de pontos turísticos — só Black Cabs ou Uber</li>
-              <li>"Amizade" com rosas em Covent Garden — aceitou, vai pagar</li>
-            </ul>
-          </div>
-          <div class="safety-card">
-            <h4>Bairros e horários</h4>
-            <ul>
-              <li>North Acton: tranquilo de dia e à noite</li>
-              <li>Shoreditch/East: ok nas áreas movimentadas; cuidado em ruas escuras após meia-noite</li>
-              <li>Evitar caminhar à noite em ruas desertas em qualquer bairro — Uber resolve</li>
-              <li>Camden à noite: movimentado e seguro nas áreas de bar, mas fique atento</li>
-            </ul>
-          </div>
-          <div class="safety-card">
-            <h4>Transporte</h4>
-            <ul>
-              <li>Tube até ~00h30. Night Tube sex/sáb até ~05h (Central Line incluída)</li>
-              <li>Uber confiável — confirme placa e motorista antes de entrar</li>
-              <li>Black Cabs licenciados: seguros, caros, opção de emergência</li>
-              <li>Nunca entre em táxi sem medidor ou app</li>
-            </ul>
-          </div>
-          <div class="safety-card">
-            <h4>Números úteis</h4>
-            <ul>
-              <li>Emergências: <strong>999</strong></li>
-              <li>Não-emergências: <strong>101</strong></li>
-              <li>Embaixada brasileira: <strong>+44 20 7747 4500</strong></li>
-              <li>NHS urgência: vá ao A&amp;E do hospital mais próximo</li>
-            </ul>
-          </div>
+    <!-- SEÇÃO 6: GARANTIA -->
+    <section class="garantia">
+        <div class="container">
+            <div class="selo-garantia">
+                <h2>🛡️ Garantia Incondicional de 7 Dias</h2>
+                <p>Teste o método por 7 dias. Se você não sentir que está ficando mais explosivo, mais ágil e mais confiante no gol, <strong>devolvemos 100% do seu dinheiro</strong>. Sem perguntas, sem burocracia.</p>
+                <p class="frase-impacto">O risco é todo meu. A transformação é toda sua.</p>
+            </div>
         </div>
-      </section>
+    </section>
 
-      <!-- PLANO B -->
-      <section id="planob">
-        <span class="section-label">Contingências</span>
-        <h2>Plano B — <em>imprevistos</em></h2>
-        <ul class="planb-list">
-          <li><span class="planb-icon">01</span><div><strong>Chuva por vários dias seguidos</strong> — não para Londres. Tube, museus gratuitos, mercados cobertos, pubs. Tenha guarda-chuva compacto sempre. Outubro chuvoso é London no estado mais genuíno.</div></li>
-          <li><span class="planb-icon">02</span><div><strong>Greve ou interrupção na Central Line</strong> — acontece. Ônibus da mesma tarifa pelo Oyster/contactless. Uber. Na Central Line saindo de North Acton: a linha vai até Ealing Broadway, onde pega District. Rota alternativa sempre existe.</div></li>
-          <li><span class="planb-icon">03</span><div><strong>Atração fechada</strong> — Tower of London, Westminster Abbey e St Paul's ocasionalmente fecham para eventos. Reserve antecipadamente e cheque o site oficial no dia anterior.</div></li>
-          <li><span class="planb-icon">04</span><div><strong>Cartão bloqueado</strong> — avise seu banco antes de viajar. Leve dois cartões de bandeiras diferentes. Tenha £100-150 em espécie como reserva.</div></li>
-          <li><span class="planb-icon">05</span><div><strong>Problema de saúde</strong> — brasileiros têm acesso ao NHS em emergências. Vá ao A&amp;E do hospital mais próximo. Farmácias (Boots, Lloyd's) têm farmacêuticos que orientam sem consulta para casos menores.</div></li>
-        </ul>
-      </section>
+    <!-- SEÇÃO 7: OBJEÇÕES (FAQ) -->
+    <section class="faq">
+        <div class="container">
+            <h2>Ainda em dúvida? Olha só:</h2>
+            
+            <div class="pergunta">
+                <h3>❓ "Eu sou iniciante, esse método serve pra mim?"</h3>
+                <p>Sim! O Reflexo de Gato™ tem progressão. Você começa no seu nível e evolui sem risco de lesão.</p>
+            </div>
 
-      <!-- ARMADILHAS -->
-      <section id="armadilhas">
-        <span class="section-label">O que evitar</span>
-        <h2>Armadilhas a <em>evitar</em></h2>
-        <ul class="trap-list">
-          <li><span class="trap-x">✕</span><div><strong>Cruzar a cidade sem planejar o polo do dia</strong> — sem o agrupamento geográfico, é fácil fazer North Acton → Greenwich de manhã → Kensington de tarde → North Acton: 3h de Tube perdidas. Siga a ordem dos polos.</div></li>
-          <li><span class="trap-x">✕</span><div><strong>Restaurantes na frente de atrações</strong> — Trafalgar Square, British Museum, Tower of London têm restaurantes com preços inflacionados 30-40%. Caminhe duas ruas antes de sentar.</div></li>
-          <li><span class="trap-x">✕</span><div><strong>Hop-on Hop-off sem pesquisa</strong> — ~£35/pessoa, lento, o Tube chega nos mesmos lugares mais rápido e mais barato.</div></li>
-          <li><span class="trap-x">✕</span><div><strong>Tentar ver museus inteiros</strong> — British Museum e V&A têm acervo para semanas. Escolha 2-3 salas por visita e vá fundo. Quem tenta tudo sai exausto.</div></li>
-          <li><span class="trap-x">✕</span><div><strong>Cambiar no Brasil para libras em casa de câmbio</strong> — taxa costuma ser pior. Saque nas ATMs de bancos locais ou use cartão Wise/C6/Nomad.</div></li>
-          <li><span class="trap-x">✕</span><div><strong>Ignorar o Sunday Roast</strong> — é a refeição mais britânica que existe. Pelo menos uma vez. É parte da viagem.</div></li>
-        </ul>
-      </section>
+            <div class="pergunta">
+                <h3>❓ "Eu preciso ter academia?"</h3>
+                <p>Sim. Esse método foi desenhado para ser executado em academia, com equipamentos básicos (halteres, barras, caixa de salto). É justamente isso que faz ele entregar resultados profissionais — e não treino genérico de quarto.</p>
+            </div>
 
-      <!-- PREPARAÇÃO -->
-      <section id="preparacao">
-        <span class="section-label">Logística</span>
-        <h2><em>Preparação</em> antes de viajar</h2>
-        <div class="prep-grid">
-          <div class="prep-card">
-            <h4>Documentos</h4>
-            <ul>
-              <li>Passaporte válido (mín. 6 meses)</li>
-              <li><strong>ETA obrigatória</strong> desde 2024 para brasileiros — ~£10/pessoa no gov.uk/apply-for-an-eta</li>
-              <li>Seguro viagem — mín. USD 30.000 de cobertura</li>
-              <li>Cópia digital dos documentos no e-mail</li>
-            </ul>
-          </div>
-          <div class="prep-card">
-            <h4>Saúde</h4>
-            <ul>
-              <li>Vacina febre amarela (exigida na entrada de Portugal)</li>
-              <li>Medicamentos de uso contínuo com receita</li>
-              <li>Remédio para gripe/resfriado — outubro frio</li>
-              <li>Protetor labial — vento resseca</li>
-            </ul>
-          </div>
-          <div class="prep-card">
-            <h4>Dinheiro</h4>
-            <ul>
-              <li>Cartão Wise ou Nomad (sem IOF, câmbio do dia)</li>
-              <li>Avise seu banco da viagem</li>
-              <li>£100-150 em espécie de reserva</li>
-              <li>Contactless funciona no Tube direto</li>
-            </ul>
-          </div>
-          <div class="prep-card">
-            <h4>Conectividade</h4>
-            <ul>
-              <li>Chip no aeroporto: Three, Vodafone, EE (£10-15)</li>
-              <li>Ou eSIM: Airalo, Holafly</li>
-              <li>App <strong>TfL Go</strong> — essencial para Tube</li>
-              <li>App <strong>Citymapper</strong> — melhor navegação de Londres</li>
-            </ul>
-          </div>
-          <div class="prep-card">
-            <h4>Tomadas</h4>
-            <ul>
-              <li>UK usa plugue <strong>tipo G</strong> (3 pinos largos)</li>
-              <li>Tensão 230V — mesma do Brasil</li>
-              <li>Leve 2 adaptadores tipo G</li>
-              <li>Power bank — dias longos de passeio</li>
-            </ul>
-          </div>
-          <div class="prep-card">
-            <h4>Roupas para outono</h4>
-            <ul>
-              <li>Casaco impermeável leve — obrigatório</li>
-              <li>Sistema de camadas: camiseta + suéter + casaco</li>
-              <li>Calçado confortável para andar muito</li>
-              <li>Lenço e gorro para outubro</li>
-            </ul>
-          </div>
+            <div class="pergunta">
+                <h3>❓ "Quanto tempo até eu sentir resultado?"</h3>
+                <p>A maioria dos goleiros sente diferença de explosão e mobilidade já nas <strong>primeiras 2 a 3 semanas</strong> de treino consistente.</p>
+            </div>
+
+            <div class="pergunta">
+                <h3>❓ "E se eu não conseguir treinar 3x por semana?"</h3>
+                <p>O ideal é 3x por semana, 45-60 minutos. Menos que isso, o resultado vem mais devagar — mas vem.</p>
+            </div>
+
+            <div class="pergunta">
+                <h3>❓ "Tem idade pra começar?"</h3>
+                <p>O método funciona para goleiros de 14 a 40+ anos. Eu mesmo virei profissional aos 33. Se você joga no gol, o método é pra você.</p>
+            </div>
         </div>
-      </section>
+    </section>
 
-      <!-- PARA ENTRAR NO CLIMA -->
-      <section id="clima">
-        <span class="section-label">Antes de embarcar</span>
-        <h2>Para entrar no <em>clima</em></h2>
-        <div class="media-grid">
-          <div class="media-card"><span class="mc-type">Filme</span><div class="mc-title">Notting Hill</div><div class="mc-detail">1999 · Roger Michell · no seu bairro vizinho</div></div>
-          <div class="media-card"><span class="mc-type">Série</span><div class="mc-title">Fleabag</div><div class="mc-detail">Amazon · 2016–2019 · London cotidiano</div></div>
-          <div class="media-card"><span class="mc-type">Série</span><div class="mc-title">Sherlock</div><div class="mc-detail">Netflix/BBC · London arquitetônico</div></div>
-          <div class="media-card"><span class="mc-type">Livro</span><div class="mc-title">London: The Biography</div><div class="mc-detail">Peter Ackroyd · 2001</div></div>
-          <div class="media-card"><span class="mc-type">Livro</span><div class="mc-title">White Teeth</div><div class="mc-detail">Zadie Smith · West London real</div></div>
-          <div class="media-card"><span class="mc-type">Filme</span><div class="mc-title">Paddington</div><div class="mc-detail">2014 · Paul King · leve e certeiro</div></div>
+    <!-- SEÇÃO 8: DEPOIMENTO -->
+    <section class="depoimento">
+        <div class="container">
+            <h2>O que estão dizendo sobre o método:</h2>
+            <div class="depoimento-conteudo">
+                <div class="depoimento-texto">
+                    <p class="depoimento-frase">"O Reflexo de Gato™ tornou minhas defesas mais rápidas e meus treinos muito mais eficientes. Recomendo para qualquer goleiro que queira sair do amador e virar um paredão."</p>
+                </div>
+                <div class="depoimento-autoria">
+                    <img src="imagens/goleiromoderno.jpg" alt="Foto do goleiro moderno" />
+                    <div>
+                        <p class="goleiro-moderno-nome">Goleiro moderno</p>
+                        <p class="goleiro-moderno-legenda">200k seguidores</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </section>
+    </section>
 
-    </div>
+    <!-- SEÇÃO 9: SOBRE -->
+    <section class="sobre">
+        <div class="container">
+            <h2>Quem criou o <span class="destaque">Reflexo de Gato™</span>?</h2>
+            <p class="lead-sobre">
+                <strong>Tobias, 35 anos.</strong> Disputou a <strong>Copa do Brasil Sub-15</strong>, foi goleiro do 
+                <strong>Paraná Clube de Futsal</strong>, virou goleiro profissional na <strong>Série Bronze aos 33 anos</strong> 
+                e como treinador conquistou o <strong>acesso Bronze → Prata</strong> e o <strong>título Paranaense em 2025</strong>. 
+                O método que você vai usar é o mesmo aplicado no profissional.
+            </p>
 
-    <svg class="wave-divider" width="100%" height="32" viewBox="0 0 820 32" preserveAspectRatio="none">
-      <path d="M0 16 Q41 4 82 16 Q123 28 164 16 Q205 4 246 16 Q287 28 328 16 Q369 4 410 16 Q451 28 492 16 Q533 4 574 16 Q615 28 656 16 Q697 4 738 16 Q779 28 820 16" stroke="#6B7960" stroke-width="1" fill="none" opacity="0.35"/>
-    </svg>
+            <div class="galeria-varzea">
+                <figure>
+                    <img src="imagens/copadobrasil.jpg" alt="Copa do Brasil Sub-15" />
+                    <figcaption>📸 Copa do Brasil Sub-15</figcaption>
+                </figure>
+                <figure>
+                    <img src="imagens/tobiasprofissional.jpg" alt="Goleiro profissional" />
+                    <figcaption>📸 Série Bronze</figcaption>
+                </figure>
+                <figure>
+                    <img src="imagens/tituloparanaensecomotreinador.jpg" alt="Título Paranaense" />
+                    <figcaption>🏆 Título Paranaense</figcaption>
+                </figure>
+                <figure>
+                    <img src="imagens/trofeuacesso.jpg" alt="Acesso Bronze para Prata" />
+                    <figcaption>🏆 Acesso Bronze → Prata</figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
 
-    <div class="signature">
-      <div class="sign">— The Travel Expert</div>
-      <div class="sign-sub">Roteiro personalizado · Londres · North Acton · 2026</div>
-    </div>
+    <!-- SEÇÃO 10: CTA FINAL -->
+    <section class="cta-final">
+        <div class="container">
+            <h2>A pergunta não é <em>"vale a pena?"</em></h2>
+            <p class="lead">A pergunta é: <strong>quanto tempo mais você vai aceitar ser o goleiro que toma frangos por falta de explosão?</strong></p>
+            <p class="lead">Por menos do que custa uma pizza, você pode começar a treinar como Buffon, Courtois e Neuer treinam.</p>
+            <a href="https://pay.hotmart.com/U105629103O?off=cwkll4um&checkoutMode=10" target="_blank" class="btn-cta-grande">SIM, EU QUERO O MÉTODO 🧤</a>
+            <p class="aviso-final">✅ Acesso imediato • ✅ Garantia de 7 dias • ✅ Suporte via WhatsApp</p>
+        </div>
+    </section>
 
-  </main>
-</div>
+    <!-- RODAPÉ -->
+    <footer>
+        <div class="container">
+            <p>© 2026 Reflexo de Gato™ — Todos os direitos reservados.</p>
+            <p>Criado por Tobias | Contato via WhatsApp</p>
+        </div>
+    </footer>
 
+    <!-- BOTÃO FLUTUANTE WHATSAPP -->
+    <a href="https://wa.me/5543996090846?text=Ol%C3%A1%20Tobias!%20Tenho%20interesse%20no%20m%C3%A9todo%20Reflexo%20de%20Gato%E2%84%A2%20e%20quero%20tirar%20uma%20d%C3%BAvida." target="_blank" class="whatsapp-flutuante" aria-label="Fale conosco no WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="white">
+            <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23-1.48 0-2.93-.39-4.19-1.15l-.3-.17-3.12.82.83-3.04-.2-.32a8.188 8.188 0 0 1-1.26-4.38c.01-4.54 3.7-8.24 8.25-8.24M8.53 7.33c-.16 0-.43.06-.66.31-.22.25-.87.86-.87 2.07 0 1.22.89 2.39 1 2.56.14.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.53.07-.26-.13-1.06-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.27-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.11-.56-1.35-.77-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.47-.01z"/>
+        </svg>
+    </a>
+
+    <script src="script.js"></script>
 </body>
 </html>
